@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Homestay;
 
 class HomestayTableSeeder extends Seeder
 {
@@ -24,7 +25,7 @@ class HomestayTableSeeder extends Seeder
                 'homestay_rules' => 'Minimum stay is for 1 night, Maximum stay is for 6 nights', 
                 'homestay_price' => 18,
 
-                'homestay_images' => 'homestay11.png','homestay12.png','homestay13.png',
+                'homestay_images' => 'homestay11.png, homestay12.png, homestay13.png',
 
             ],
         ]);

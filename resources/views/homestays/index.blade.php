@@ -1,16 +1,17 @@
+<!-- resources/views/homestays/index.blade.php -->
 <x-app-layout>
-
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Homestays') }}
         </h2>
     </x-slot>
-        <!-- Success Message -->
-        @if (session('success'))
+
+    <!-- Success Message -->
+    @if (session('success'))
         <x-alert-success>
             {{ session('success') }}
         </x-alert-success>
-        @endif
+    @endif
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -21,14 +22,9 @@
                         @foreach($homestays as $homestay)
                             <!-- Homestay Card Component -->
                             <a href="{{ route('homestays.show', $homestay->homestay_id) }}" class="block">
-                                <x-homestay-card 
-                                    :homestay_name="$homestay->homestay_name"
-                                     
-                                    :homestay_location="$homestay->homestay_location" 
-                                    :homestay_price="$homestay->homestay_price"
-                                />
-                                <!-- homestay image to be inserted above when separated! -->
-                            </a>
+    <x-homestay-card :homestay="$homestay" />
+</a>
+
                         @endforeach
                     </div>
                 </div>

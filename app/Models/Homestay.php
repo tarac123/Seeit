@@ -27,5 +27,14 @@ class Homestay extends Model
         'homestay_price',
         'homestay_images',
 
-    ];
+    ]; 
+        /**
+     * Get the reviews for the homestay.
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'homestay_id', 'homestay_id');
+    }
+
 }
+

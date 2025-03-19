@@ -18,6 +18,40 @@ class HomestayController extends Controller
         return view('homestays.index', compact('homestays')); //return the view with albums
     }
 
+    public function store(Request $request)
+{
+    $validated = $request->validate([
+        'homestay_name' => 'required|string|max:255',
+        'homestay_location' => 'required|string|max:255',
+        'homestay_desc' => 'required|string',
+        'homestay_rules' => 'required|string',
+        'homestay_price' => 'required|numeric',
+        'homestay_images' => 'required|array',
+        'homestay_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+    
+    // Handle multiple image uploads
+    $imagePaths = [];
+    if ($request->hasFile('homestay_images')) {
+        foreach ($request->file('homestay_images') as $image) {
+            $path = $image->store('homestays', 'public');
+            $imagePaths[] = $path;
+        }
+    }
+    
+    $homestay = new Homestay();
+    $homestay->homestay_name = $validated['homestay_name'];
+    $homestay->homestay_location = $validated['homestay_location'];
+    $homestay->homestay_desc = $validated['homestay_desc'];
+    $homestay->homestay_rules = $validated['homestay_rules'];
+    $homestay->homestay_price = $validated['homestay_price'];
+    $homestay->homestay_images = implode(',', $imagePaths); // Store as comma-separated string
+    $homestay->save();
+    
+    return redirect()->route('homestays.index')->with('success', 'Homestay created successfully');
+}
+
+
     // /**
     //  * Show the form for creating a new resource.
     //  */
@@ -62,13 +96,19 @@ class HomestayController extends Controller
     //     return redirect()->route('albums.index')->with('success', 'Album added successfully!');
     // }
 
-    // /**
-    //  * Display the specified resource.
-    //  */
-    // public function show(Album $album)
-    // {
-    //     return view('albums.show', compact('album'));
-    // }
+    /**
+     * Display the specified resource.
+     */
+    public function show(Homestay $homestay)
+
+    {
+        $homestay->load('reviews.user');
+        return view('homestays.show', compact('homestay'));
+        
+    }
+
+
+}
 
     // /**
     //  * Show the form for editing the specified resource.
@@ -127,4 +167,4 @@ class HomestayController extends Controller
     //                 ]);
     // }
 
-}
+

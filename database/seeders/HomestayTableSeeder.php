@@ -25,7 +25,7 @@ class HomestayTableSeeder extends Seeder
                 'homestay_rules' => 'Minimum stay is for 1 night, Maximum stay is for 6 nights', 
                 'homestay_price' => 18,
 
-                'homestay_images' => 'homestay11.png, homestay12.png, homestay13.png',
+               'homestay_images' => 'images/homestay11.png, images/homestay12.png, images/homestay13.png',
 
             ],
         ]);

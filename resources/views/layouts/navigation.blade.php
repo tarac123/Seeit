@@ -15,6 +15,10 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('homestays.index')" :active="request()->routeIs('homestays.index')">
+                    {{ __('View All Homestays') }} 
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -38,7 +42,7 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
-                        <!-- Authentication -->
+                        Authentication
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
 

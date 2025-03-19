@@ -87,27 +87,40 @@
         @enderror
     </div>
 
+<!-- Image Input -->
+<div class="mb-4">
+    <label for="homestay_images" class="block text-sm font-medium text-gray-700">Images (Select multiple)</label>
+    <input
+        type="file"
+        name="homestay_images[]"
+        id="homestay_images"
+        multiple
+        {{ isset($homestay) ? '' : 'required' }} 
+        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
 
-    <!-- Image Input -->
-    <div class="mb-4">
-        <label for="homestay_images" class="block text-sm font-medium text-gray-700">Images</label>
-        <input
-            type="file"
-            name="homestay_images"
-            id="homestay_images"
-            {{ isset($homestay) ? 'required' : '' }} 
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
-
-        @error('image')
-            <p class="text-sm text-red-600">{{ $message }}</p>
-        @enderror
-    </div>
+    @error('homestay_images')
+        <p class="text-sm text-red-600">{{ $message }}</p>
+    @enderror
+    
+    @if(isset($homestay) && $homestay->homestay_images)
+        <div class="mt-2">
+            <p class="text-sm text-gray-500">Current images:</p>
+            <div class="flex flex-wrap gap-2 mt-1">
+                @foreach(explode(',', $homestay->homestay_images) as $image)
+                    <div class="relative">
+                        <img src="{{ asset('storage/' . trim($image)) }}" alt="Homestay image" class="h-16 w-16 object-cover rounded">
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+</div>
 
 
     <!-- Submit Button -->
     <div>
         <x-primary-button>
-            {{ isset($album) ? 'Update Homestay' : 'Add Homestay' }}
+            {{ isset($homestay) ? 'Update Homestay' : 'Add Homestay' }}
         </x-primary-button>
     </div>
 

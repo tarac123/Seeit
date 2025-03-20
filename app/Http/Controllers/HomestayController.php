@@ -108,7 +108,7 @@ class HomestayController extends Controller
     }
 
 
-}
+
 
     // /**
     //  * Show the form for editing the specified resource.
@@ -151,20 +151,19 @@ class HomestayController extends Controller
     //     return redirect()->route('albums.index')->with('success', 'Album deleted successfully!');
     // }
     
-    // public function search(Request $request)
-    // {
-    //     $query = $request->input('query');
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
         
-    //     // Search in title, artist, and tracklist
-    //     $albums = Album::where('title', 'like', "%{$query}%")
-    //                   ->orWhere('artist', 'like', "%{$query}%")
-    //                   ->orWhere('tracklist', 'like', "%{$query}%")
-    //                   ->get();
+        // Search in title, artist, and tracklist
+        $homestays = Homestay::where('homestay_name', 'like', "%{$query}%")
+                      ->orWhere('homestay_location', 'like', "%{$query}%")
+                      ->get();
         
-    //                   return view('albums.search', [
-    //                     'albums' => $albums,
-    //                     'query' => $query
-    //                 ]);
-    // }
-
+                      return view('homestays.search', [
+                        'homestays' => $homestays,
+                        'query' => $query
+                    ]);
+    }
+}
 

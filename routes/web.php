@@ -10,12 +10,11 @@ Route::get('/', function () {
 });
 
 Route::get('/homestays', [HomestayController::class, 'index'])->name('homestays.index');
+Route::get('/homestays/create', [HomestayController::class, 'create'])->name('homestays.create');
+Route::get('/homestays/search', [HomestayController::class, 'search'])->name('homestays.search');
 Route::get('/homestays/{homestay}', [HomestayController::class, 'show'])->name('homestays.show');
 
-Route::get('/homestays/create', [HomestayController::class, 'create'])->name('homestays.create');
 
-
-Route::get('/bookings/create/{homestay_id}', [BookingController::class, 'create'])->name('bookings.create');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/homestays/{homestay}/reviews/create', [ReviewController::class, 'create'])->name('reviews.create');

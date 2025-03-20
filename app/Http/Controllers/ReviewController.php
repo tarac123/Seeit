@@ -16,23 +16,20 @@ class ReviewController extends Controller
     
     public function store(Request $request, Homestay $homestay)
     {
-
-       
-
         $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'required|string|max:500',
         ]);
-    
+        
         $homestay->reviews()->create([
             'user_id' => auth()->id(),
-            'homestay_id' => $homestay->id,
+            'homestay_id' => $homestay->homestay_id, // Use homestay_id, not id
             'rating' => $validated['rating'],
             'comment' => $validated['comment'],
         ]);
-    
-        return redirect()->route('homestays.show', $homestay->id)
-                         ->with('success', 'Review added successfully!');
+        
+        return redirect()->route('homestays.show', ['homestay' => $homestay->homestay_id])
+            ->with('success', 'Review added successfully!');
     }
     /**
      * Edit a review.
@@ -68,8 +65,8 @@ class ReviewController extends Controller
         $review->update($request->only(['rating', 'comment']));
     
         // Redirect back to the associated homestays's show page with a success message
-        return redirect()->route('homestays.show', $review->homestays_id)
-                         ->with('success', 'Review updated successfully.');
+        return redirect()->route('homestays.show', ['homestay' => $review->homestay_id])
+        ->with('success', 'Review updated successfully.');
     }
     
 
@@ -82,8 +79,8 @@ class ReviewController extends Controller
         $review->delete();
     
         // Redirect to the hoemstay show page with success message
-        return redirect()->route('homestays.show', $homestayId)
-            ->with('success', 'Review deleted successfully!');
+        return redirect()->route('homestays.show', ['homestay' => $homestayId])
+        ->with('success', 'Review deleted successfully!');
     }
     
 }

@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <form action="{{ route('reviews.store', $homestay->homestay_id) }}" method="POST">
+                <form action="{{ route('reviews.store', ['homestay' => $homestay->homestay_id]) }}" method="POST">
                         @csrf
                         
                         <!-- Display validation errors if any -->
@@ -68,34 +68,4 @@
         </div>
     </div>
 
-    <!-- <script>
-        // Simple script to highlight stars when hovering
-        document.addEventListener('DOMContentLoaded', function() {
-            const stars = document.querySelectorAll('.rating label');
-            
-            stars.forEach((star, index) => {
-                star.addEventListener('mouseenter', () => {
-                    // Highlight this star and all previous stars
-                    for (let i = 0; i <= index; i++) {
-                        stars[i].classList.add('text-yellow-400');
-                    }
-                    // Un-highlight all stars after this one
-                    for (let i = index + 1; i < stars.length; i++) {
-                        stars[i].classList.remove('text-yellow-400');
-                    }
-                });
-                
-                star.addEventListener('mouseleave', () => {
-                    // Reset all stars on mouse leave
-                    stars.forEach(s => {
-                        const input = document.getElementById(s.getAttribute('for'));
-                        if (!input.checked) {
-                            s.classList.remove('text-yellow-400');
-                            s.classList.add('text-gray-300');
-                        }
-                    });
-                });
-            });
-        });
-    </script> -->
 </x-app-layout>

@@ -12,9 +12,9 @@
             @endif
 
 
-
+             <!-- Header Section -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <!-- Hero Header Section -->
+                           
             <div class="bg-white-50 p-6">
                 <h1 class="text-3xl font-bold mb-2">{{ $homestay->homestay_name }}</h1>
                 
@@ -39,14 +39,14 @@
             
                 <div class="p-6">
                     <div class="flex flex-col md:flex-row">
-                        <!-- Image Gallery -->
+                        <!-- Images -->
                         <div class="w-full md:w-2/3 mb-6 md:mb-0 md:pr-6">
                             @if(isset($homestay->homestay_images))
                                 @php
                                     $images = explode(',', $homestay->homestay_images);
                                 @endphp
                                 <div class="relative">
-                                    <!-- Main large image with rounded corners -->
+                                    <!-- Main large image -->
                                     <div class="bg-gray-200 rounded-lg overflow-hidden border-2 border-blue-200">
                                         <img 
                                             src="{{ asset('storage/' . trim($images[0])) }}" 
@@ -55,7 +55,7 @@
                                             id="mainImage"
                                         >
                                     </div>
-                                    
+                                    <!-- rest of images -->
                                     @if(count($images) > 1)
                                         <div class="mt-4 grid grid-cols-3 gap-2">
                                             @foreach(array_slice($images, 1, 3) as $index => $image)
@@ -92,7 +92,7 @@
                                     <h3 class="text-2xl font-bold">${{ $homestay->homestay_price }}</h3>
                                     <p class="text-gray-600">per night</p>
                                 </div>
-                                <a href="{{ route('bookings.create', ['homestay_id' => $homestay->homestay_id]) }}" class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black">
+                                <a href=" ['homestay_id' => $homestay->homestay_id]) }}" class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black">
                                     Reserve
                                 </a>
                             </div>

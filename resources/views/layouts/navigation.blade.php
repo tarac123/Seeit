@@ -42,7 +42,7 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
-                        Authentication
+                        <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
 

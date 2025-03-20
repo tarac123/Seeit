@@ -18,6 +18,7 @@ return new class extends Migration
                 $table->string('homestay_name');             
                 $table->string('homestay_location');         
                 $table->text('homestay_desc'); 
+                $table->text('homestay_fullDesc'); 
                 $table->string('homestay_rules');
                 $table->integer('homestay_price');  
            

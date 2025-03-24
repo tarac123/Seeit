@@ -11,10 +11,17 @@ class Review extends Model
 
     protected $fillable = [
         'user_id',
-        'homestay_id',
+        'reviewable_id',
+        'reviewable_type',
         'rating',
         'comment',
     ];
+
+    public function reviewable()
+    {
+        return $this->morphTo();
+    }
+
 
     /**
      * Get the user that owns the review.
@@ -24,11 +31,7 @@ class Review extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the homestay that the review belongs to.
-     */
-    public function homestay()
-    {
-        return $this->belongsTo(Homestay::class, 'homestay_id', 'homestay_id');
-    }
+
+
 }
+

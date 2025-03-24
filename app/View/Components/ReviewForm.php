@@ -11,6 +11,7 @@ class ReviewForm extends Component
     public $action;
     public $method;
     public $homestay;
+    public $activity;
     public $review;
 
     /**
@@ -19,6 +20,7 @@ class ReviewForm extends Component
      * @param  string  $action
      * @param  string  $method
      * @param  \App\Models\Homestay  $homestay
+     * @param  \App\Models\Activity  $activity
      * @param  \App\Models\Review|null  $review
      * @return void
      */
@@ -26,7 +28,8 @@ class ReviewForm extends Component
     {
         $this->action = $action;
         $this->method = $method;
-        $this->hoemstay = $homestay;
+        $this->homestay = $homestay;
+        $this->activity = $activity;
         $this->review = $review;
     }
 

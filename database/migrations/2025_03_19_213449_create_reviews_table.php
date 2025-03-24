@@ -15,8 +15,8 @@ class CreateReviewsTable extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('homestay_id');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->morphs('reviewable');
             $table->integer('rating');
             $table->text('comment');
             $table->timestamps();

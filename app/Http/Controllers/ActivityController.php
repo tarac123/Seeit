@@ -2,53 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Homestay;
+use App\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class HomestayController extends Controller
+class ActivityController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $homestays = Homestay::all(); //fetch all albums
-        // dd($albums);
-        return view('homestays.index', compact('homestays')); //return the view with albums
+        $activities = Activity::all(); //fetch all albums
+
+        return view('activities.index', compact('activities')); //return the view with activities
     }
 
     public function store(Request $request)
 {
     $validated = $request->validate([
-        'homestay_name' => 'required|string|max:255',
-        'homestay_location' => 'required|string|max:255',
-        'homestay_desc' => 'required|string',
-        'homestay_rules' => 'required|string',
-        'homestay_price' => 'required|numeric',
-        'homestay_images' => 'required|array',
-        'homestay_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        'activity_name' => 'required|string|max:255',
+        'activity_location' => 'required|string|max:255',
+        'activity_desc' => 'required|string',
+        'activity_rules' => 'required|string',
+        'activity_price' => 'required|numeric',
+        'activity_images' => 'required|array',
+        'activity_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
     
     // Handle multiple image uploads
     $imagePaths = [];
-    if ($request->hasFile('homestay_images')) {
-        foreach ($request->file('homestay_images') as $image) {
-            $path = $image->store('homestays', 'public');
+    if ($request->hasFile('activity_images')) {
+        foreach ($request->file('activity_images') as $image) {
+            $path = $image->store('activities', 'public');
             $imagePaths[] = $path;
         }
     }
     
-    $homestay = new Homestay();
-    $homestay->homestay_name = $validated['homestay_name'];
-    $homestay->homestay_location = $validated['homestay_location'];
-    $homestay->homestay_desc = $validated['homestay_desc'];
-    $homestay->homestay_rules = $validated['homestay_rules'];
-    $homestay->homestay_price = $validated['homestay_price'];
-    $homestay->homestay_images = implode(',', $imagePaths); // Store as comma-separated string
-    $homestay->save();
+    $activity = new Activity();
+    $activity->activity_name = $validated['activity_name'];
+    $activity->activity_location = $validated['activity_location'];
+    $activity->activity_desc = $validated['activity_desc'];
+    $activity->activity_rules = $validated['activity_rules'];
+    $activity->activity_price = $validated['activity_price'];
+    $activity->activity_images = implode(',', $imagePaths); // Store as comma-separated string
+    $activity->save();
     
-    return redirect()->route('homestays.index')->with('success', 'Homestay created successfully');
+    return redirect()->route('activities.index')->with('success', 'Activity created successfully');
 }
 
 
@@ -99,13 +99,12 @@ class HomestayController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Homestay $homestay)
-
+    public function show(Activity $activity)
     {
-        $homestay->load('reviews.user');
-        return view('homestays.show', compact('homestay'));
-        
+        $activity->load('reviews.user');
+        return view('activities.show', compact('activity'));
     }
+    
 
 
 
@@ -154,11 +153,11 @@ class HomestayController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $homestays = Homestay::where('homestay_name', 'like', "%{$query}%")
-                            ->orWhere('homestay_location', 'like', "%{$query}%")
+        $activities = Activity::where('activity_name', 'like', "%{$query}%")
+                            ->orWhere('activity_location', 'like', "%{$query}%")
                             ->get();
     
-        return view('homestays.index', compact('homestays'));
+        return view('activities.index', compact('activities'));
     }
 }
 

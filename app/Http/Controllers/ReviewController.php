@@ -1,36 +1,49 @@
 <?php
 
-namespace App\Http\Controllers;
-
 use App\Models\Review;
 use App\Models\Homestay;
+use App\Models\Activity;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ReviewController extends Controller
 {
-    public function create(Homestay $homestay)
-    {            
-        return view('reviews.create', compact('homestay'));
-    }
-    
-    public function store(Request $request, Homestay $homestay)
+    public function store(Request $request, $type, $id)
     {
-        $validated = $request->validate([
+        $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|max:500',
+            'comment' => 'required|string'
         ]);
-        
-        $homestay->reviews()->create([
+
+        // Determine model type dynamically
+        $model = $this->getModel($type, $id);
+        if (!$model) {
+            return response()->json(['error' => 'Invalid review type'], 400);
+        }
+
+        // Create review
+        $review = new Review([
             'user_id' => auth()->id(),
-            'homestay_id' => $homestay->homestay_id, // Use homestay_id, not id
-            'rating' => $validated['rating'],
-            'comment' => $validated['comment'],
+            'rating' => $request->rating,
+            'comment' => $request->comment,
         ]);
-        
-        return redirect()->route('homestays.show', ['homestay' => $homestay->homestay_id])
-            ->with('success', 'Review added successfully!');
+
+        $model->reviews()->save($review);
+
+        return response()->json(['message' => 'Review added successfully']);
     }
+
+
+    private function getModel($type, $id)
+    {
+        $models = [
+            'homestay' => Homestay::class,
+            'activity' => Activity::class,
+        ];
+
+        return isset($models[$type]) ? $models[$type]::find($id) : null;
+    }
+
+
     /**
      * Edit a review.
      */

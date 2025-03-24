@@ -1,15 +1,15 @@
-<!-- resources/views/homestays/index.blade.php -->
+
 <x-app-layout>
     <x-slot name="header">
              <!-- Search bar -->
 
-             <!-- searching homesya name and locations  -->
+             <!-- searching activity name and locations  -->
              <div class="hidden sm:flex sm:items-center sm:ml-6">
-    <form action="{{ route('homestays.search') }}" method="GET" class="flex items-center">
+    <form action="{{ route('activities.search') }}" method="GET" class="flex items-center">
         <input 
             type="text" 
             name="query" 
-            placeholder="Search Homestays / Locations" 
+            placeholder="Search Activities / Locations" 
             class="border-gray-300 rounded-2xl shadow-sm focus:ring-[#C1FA8F] focus:border-[#C1FA8F] text-sm w-64"
             required
         >
@@ -42,12 +42,12 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h3 class="font-semibold text-lg mb-4">All Homestays</h3>
+                    <h3 class="font-semibold text-lg mb-4">All Activities</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach($homestays as $homestay)
-                            <!-- Homestay Card Component -->
-                            <a href="{{ route('homestays.show', $homestay->homestay_id) }}" class="block">
-                            <x-homestay-card :homestay="$homestay" />
+                        @foreach($activities as $activity)
+                            <!-- activity Card Component -->
+                            <a href="{{ route('activities.show', $activity->activity_id) }}" class="block">
+                            <x-activity-card :activity="$activity" />
                         </a>
 
                         @endforeach

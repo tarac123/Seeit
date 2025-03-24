@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomestayController;
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -14,12 +15,18 @@ Route::get('/homestays/create', [HomestayController::class, 'create'])->name('ho
 Route::get('/homestays/search', [HomestayController::class, 'search'])->name('homestays.search');
 Route::get('/homestays/{homestay}', [HomestayController::class, 'show'])->name('homestays.show');
 
+Route::get('/activities', [ActivityController::class, 'index'])->name('activities.index');
+Route::get('/activities/create', [ActivityController::class, 'create'])->name('activities.create');
+Route::get('/activities/search', [ActivityController::class, 'search'])->name('activities.search');
+Route::get('/activities/{activity}', [ActivityController::class, 'show'])->name('activities.show');
+
+
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/homestays/{homestay}/reviews/create', [ReviewController::class, 'create'])->name('reviews.create');
-    Route::post('/homestays/{homestay}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::post('/reviews/{type}/{id}', [ReviewController::class, 'store'])->middleware('auth');
 
+    Route::get('/reviews/create', [ReviewController::class, 'create'])->name('reviews.create');
     Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');

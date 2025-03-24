@@ -15,7 +15,9 @@ class DatabaseSeeder extends Seeder
     {
 
         $this->call([
-            HomestayTableSeeder::class
+            HomestayTableSeeder::class,
+            ActivityTableSeeder::class
+
         ]);
         // User::factory(10)->create();
 

@@ -11,10 +11,10 @@
 
             <!-- Navigation Links - Desktop -->
             <div class="hidden sm:flex space-x-6">
-                <a href="{{ route('homestays.index') }}" class="px-4 py-2 bg-[#C1FA8F] border-2 border-black rounded-full text-gray-800 font-medium">
+                <a href="{{ route('homestays.index') }}" class="px-4 py-2 bg-[#C1FA8F] border-2 border-black rounded-full text-gray-800 font-medium hover:bg-[#a1cf7a]">
                     Homestays
                 </a>
-                <a href="#" class="px-4 py-2 text-gray-800 font-medium">
+                <a href="{{ route('activities.index') }}" class="px-4 py-2 text-gray-800 font-medium">
                     Activities
                 </a>
             </div>

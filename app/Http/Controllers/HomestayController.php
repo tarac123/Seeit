@@ -14,8 +14,8 @@ class HomestayController extends Controller
     public function index()
     {
         $homestays = Homestay::all(); //fetch all albums
-        // dd($albums);
-        return view('homestays.index', compact('homestays')); //return the view with albums
+
+        return view('homestays.index', compact('homestays')); //return the view with homestays
     }
 
     public function store(Request $request)
@@ -51,105 +51,42 @@ class HomestayController extends Controller
     return redirect()->route('homestays.index')->with('success', 'Homestay created successfully');
 }
 
-
-    // /**
-    //  * Show the form for creating a new resource.
-    //  */
-    // public function create()
-    // {
-    //     return view('albums.create');
-    // }
-
-    // /**
-    //  * Store a newly created resource in storage.
-    //  */
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'title' => 'required',
-    //         'artist' => 'required|max:100',
-    //         'release_date' => 'required|date',
-    //         'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2080',
-    //         'tracklist' => 'nullable|max:3000', // Make tracklist optional
-    //         'duration'=>'required|integer',
-    //         'listen_link'=>'required|string'
-    //     ]);
-
-    //         // Handle the image upload
-    // if ($request->hasFile('image')) {
-    //     $imageName = time() . '.' . $request->image->extension();
-    //     $request->image->move(public_path('images/albums'), $imageName); // Save the image to the server
-    // } else {
-    //     $imageName = 'default.png'; // Optional: specify a default image if none is uploaded
-    // }
     
-    //     Album::create([
-    //         'title' => $request->title,
-    //         'artist' => $request->artist,
-    //         'release_date' => $request->release_date,
-    //         'image' => $imageName,
-    //         'tracklist' => $request->tracklist ?? '', // Provide an empty string if tracklist is null
-    //         'duration'=> $request->duration,
-    //         'listen_link'=>$request->listen_link,
-    //     ]);
-    
-    //     return redirect()->route('albums.index')->with('success', 'Album added successfully!');
-    // }
+    public function create()
+    {
+        return view('homestays.create');
+    }
 
     /**
      * Display the specified resource.
      */
     public function show(Homestay $homestay)
-
     {
-        $homestay->load('reviews.user');
-        return view('homestays.show', compact('homestay'));
-        
+        try {
+            // Eager load reviews with their associated users
+            $homestay->load(['reviews.user' => function($query) {
+                $query->orderBy('created_at', 'desc');
+            }]);
+
+            // Calculate average rating
+            $averageRating = $homestay->reviews()->avg('rating') ?? 0;
+
+            return view('homestays.show', [
+                'homestay' => $homestay,
+                'averageRating' => round($averageRating, 1)
+            ]);
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error('Error in homestay show method', [
+                'homestay_id' => $homestay->id,
+                'error' => $e->getMessage()
+            ]);
+
+            // Redirect with error message
+            return redirect()->route('homestays.index')
+                ->with('error', 'Unable to load homestay details.');
+        }
     }
-
-
-
-
-    // /**
-    //  * Show the form for editing the specified resource.
-    //  */
-    // public function edit(Album $album)
-    // {
-    //     return view('albums.edit', compact('album'));
-    // }
-
-    // /**
-    //  * Update the specified resource in storage.
-    //  */
-    // public function update(Request $request, Album $album)
-    // {
-    //     // Validate and update the album
-    //     $validatedData = $request->validate([
-    //         'title' => 'required|string|max:255',
-    //         'artist' => 'required|string|max:255',
-    //         'tracklist' => 'required|string',
-    //         'duration' => 'required|integer',
-    //         'listen_link' => 'required|url',
-    //         'release_date' => 'required|date',
-    //         // Add other fields as necessary
-    //     ]);
-    
-    //     $album->update($validatedData);
-    
-    //     // Flash a success message to the session
-    //     return redirect()->route('albums.index')->with('success', 'Album updated successfully.');
-    // }
-    // /**
-    //  * Remove the specified resource from storage.
-    //  */
-    // public function destroy(Album $album)
-    // {
-    //     // Delete the album
-    //     $album->delete();
-    
-    //     // Redirect to the albums index with success message
-    //     return redirect()->route('albums.index')->with('success', 'Album deleted successfully!');
-    // }
     
     public function search(Request $request)
     {

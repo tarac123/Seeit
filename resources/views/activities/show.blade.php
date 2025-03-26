@@ -92,8 +92,8 @@
                                     <h3 class="text-2xl font-bold">${{ $activity->activity_price }}</h3>
                                     <p class="text-gray-600">per person</p>
                                 </div>
-                                <a href=" ['activity_id' => $activity->activity_id]) }}" class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black">
-                                    Reserve
+                                <a href="#" class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black">
+                                Reserve
                                 </a>
                             </div>
                         </div>
@@ -117,9 +117,9 @@
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-xl font-bold">Reviews from other travelers</h3>
                     @auth
-                        <a href="{{ route('reviews.create', ['activity' => $activity->activity_id]) }}" class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black">
-                            Write a Review
-                        </a>
+                    <a href="{{ route('reviews.create', ['type' => 'activity', 'id' => $activity->id]) }}">
+                         Write a Review
+                    </a>
                     @endauth
                 </div>
     

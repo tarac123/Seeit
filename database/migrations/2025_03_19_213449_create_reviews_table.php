@@ -16,15 +16,16 @@ class CreateReviewsTable extends Migration
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->morphs('reviewable');
+            $table->morphs('reviewable'); // This creates reviewable_id and reviewable_type
             $table->integer('rating');
             $table->text('comment');
             $table->timestamps();
             
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('homestay_id')->references('homestay_id')->on('homestays')->onDelete('cascade');
+            // Optionally, you can add indexes on reviewable_id and reviewable_type
+            $table->index(['reviewable_id', 'reviewable_type']);
         });
     }
+    
 
     /**
      * Reverse the migrations.

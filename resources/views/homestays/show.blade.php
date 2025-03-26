@@ -120,7 +120,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-xl font-bold">Reviews from other travelers</h3>
                     @auth
-                        <a href="{{ route('reviews.create', ['homestay' => $homestay->homestay_id]) }}" class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black">
+                        <a href="{{ route('reviews.create', ['type' => 'homestay', 'id' => $homestay->id]) }}" class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black">
                             Write a Review
                         </a>
                     @endauth

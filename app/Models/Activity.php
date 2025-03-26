@@ -31,6 +31,9 @@ class Activity extends Model
         /**
      * Get the reviews for the homestay.
      */
+
+    
+    // In Activity model
     public function reviews()
     {
         return $this->morphMany(Review::class, 'reviewable');

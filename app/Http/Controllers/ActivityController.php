@@ -51,104 +51,42 @@ class ActivityController extends Controller
     return redirect()->route('activities.index')->with('success', 'Activity created successfully');
 }
 
-
-    // /**
-    //  * Show the form for creating a new resource.
-    //  */
-    // public function create()
-    // {
-    //     return view('albums.create');
-    // }
-
-    // /**
-    //  * Store a newly created resource in storage.
-    //  */
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'title' => 'required',
-    //         'artist' => 'required|max:100',
-    //         'release_date' => 'required|date',
-    //         'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2080',
-    //         'tracklist' => 'nullable|max:3000', // Make tracklist optional
-    //         'duration'=>'required|integer',
-    //         'listen_link'=>'required|string'
-    //     ]);
-
-    //         // Handle the image upload
-    // if ($request->hasFile('image')) {
-    //     $imageName = time() . '.' . $request->image->extension();
-    //     $request->image->move(public_path('images/albums'), $imageName); // Save the image to the server
-    // } else {
-    //     $imageName = 'default.png'; // Optional: specify a default image if none is uploaded
-    // }
     
-    //     Album::create([
-    //         'title' => $request->title,
-    //         'artist' => $request->artist,
-    //         'release_date' => $request->release_date,
-    //         'image' => $imageName,
-    //         'tracklist' => $request->tracklist ?? '', // Provide an empty string if tracklist is null
-    //         'duration'=> $request->duration,
-    //         'listen_link'=>$request->listen_link,
-    //     ]);
-    
-    //     return redirect()->route('albums.index')->with('success', 'Album added successfully!');
-    // }
+    public function create()
+    {
+        return view('activities.create');
+    }
 
     /**
      * Display the specified resource.
      */
     public function show(Activity $activity)
     {
-        $activity->load('reviews.user');
-        return view('activities.show', compact('activity'));
+        try {
+            // Eager load reviews with their associated users
+            $activity->load(['reviews.user' => function($query) {
+                $query->orderBy('created_at', 'desc');
+            }]);
+
+            // Calculate average rating
+            $averageRating = $activity->reviews()->avg('rating') ?? 0;
+
+            return view('activities.show', [
+                'activity' => $activity,
+                'averageRating' => round($averageRating, 1)
+            ]);
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error('Error in activity show method', [
+                'activity_id' => $activity->id,
+                'error' => $e->getMessage()
+            ]);
+
+            // Redirect with error message
+            return redirect()->route('activities.index')
+                ->with('error', 'Unable to load activity details.');
+        }
     }
-    
-
-
-
-
-    // /**
-    //  * Show the form for editing the specified resource.
-    //  */
-    // public function edit(Album $album)
-    // {
-    //     return view('albums.edit', compact('album'));
-    // }
-
-    // /**
-    //  * Update the specified resource in storage.
-    //  */
-    // public function update(Request $request, Album $album)
-    // {
-    //     // Validate and update the album
-    //     $validatedData = $request->validate([
-    //         'title' => 'required|string|max:255',
-    //         'artist' => 'required|string|max:255',
-    //         'tracklist' => 'required|string',
-    //         'duration' => 'required|integer',
-    //         'listen_link' => 'required|url',
-    //         'release_date' => 'required|date',
-    //         // Add other fields as necessary
-    //     ]);
-    
-    //     $album->update($validatedData);
-    
-    //     // Flash a success message to the session
-    //     return redirect()->route('albums.index')->with('success', 'Album updated successfully.');
-    // }
-    // /**
-    //  * Remove the specified resource from storage.
-    //  */
-    // public function destroy(Album $album)
-    // {
-    //     // Delete the album
-    //     $album->delete();
-    
-    //     // Redirect to the albums index with success message
-    //     return redirect()->route('albums.index')->with('success', 'Album deleted successfully!');
-    // }
     
     public function search(Request $request)
     {

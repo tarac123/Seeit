@@ -20,18 +20,21 @@ Route::get('/activities/create', [ActivityController::class, 'create'])->name('a
 Route::get('/activities/search', [ActivityController::class, 'search'])->name('activities.search');
 Route::get('/activities/{activity}', [ActivityController::class, 'show'])->name('activities.show');
 
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Specific routes for creating reviews
+    Route::get('reviews/create/{type}/{id}', [ReviewController::class, 'create'])
+        ->name('reviews.create')
+        ->where(['type' => 'homestay|activity', 'id' => '\d+']);
+    
+    Route::post('reviews/store/{type}/{id}', [ReviewController::class, 'store'])
+        ->name('reviews.store')
+        ->where(['type' => 'homestay|activity', 'id' => '\d+']);
 
-
-
-Route::middleware(['auth'])->group(function () {
-    Route::post('/reviews/{type}/{id}', [ReviewController::class, 'store'])->middleware('auth');
-
-    Route::get('/reviews/create', [ReviewController::class, 'create'])->name('reviews.create');
+    // Other review routes
     Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
-    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::patch('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
-
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -44,4 +47,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-

@@ -35,6 +35,7 @@ class Homestay extends Model
     {
         return $this->morphMany(Review::class, 'reviewable');
     }
+    
 
 }
 

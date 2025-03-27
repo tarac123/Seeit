@@ -1,4 +1,4 @@
-<div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-[350px]">
+<div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow h-[350px] ">
     @if(isset($homestay->homestay_images))
         @php
             // Split the comma-separated image paths and get the first image

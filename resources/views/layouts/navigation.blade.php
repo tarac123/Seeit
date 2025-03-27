@@ -4,20 +4,25 @@
             <!-- Logo/Brand -->
             <div class="shrink-0 flex items-center">
                 <a href="{{ route('dashboard') }}" class="text-gray-700 font-semibold text-xl font-Lemon">
-                <img src="{{ asset('storage/images/Seeit.png') }}" alt="SeeIt Logo" class="h-8">
+                <img src="{{ asset('storage/images/Seeit.png') }}" alt="SeeIt Logo" class="h-8 hover:scale-110 transform transition duration-300">
 
                 </a>
             </div>
 
             <!-- Navigation Links - Desktop -->
             <div class="hidden sm:flex space-x-6">
-                <a href="{{ route('homestays.index') }}" class="px-4 py-2 bg-[#C1FA8F] border-2 border-black rounded-full text-gray-800 font-medium hover:bg-[#a1cf7a]">
+                <a href="{{ route('homestays.index') }}" 
+                   class="px-4 py-2 rounded-full text-gray-800 font-medium hover:bg-[#C1FA8F]
+                    {{ Route::is('homestays.index') ? 'border-2 border-black bg-[#C1FA8F] text-gray-800' : 'text-gray-800' }} ">
                     Homestays
                 </a>
-                <a href="{{ route('activities.index') }}" class="px-4 py-2 text-gray-800 font-medium">
+                <a href="{{ route('activities.index') }}" 
+                   class="px-4 py-2 rounded-full text-gray-800 font-medium hover:bg-[#C1FA8F] 
+                   {{ Route::is('activities.index') ? 'border-2 border-black bg-[#C1FA8F] text-gray-800' : 'text-gray-800' }} ">
                     Activities
                 </a>
             </div>
+
 
             <!-- User Menu - Desktop -->
             <div class="hidden sm:flex sm:items-center">
@@ -41,7 +46,6 @@
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">

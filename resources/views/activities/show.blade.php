@@ -47,7 +47,7 @@
                                 @endphp
                                 <div class="relative">
                                     <!-- Main large image -->
-                                    <div class="bg-gray-200 rounded-lg overflow-hidden border-2 border-blue-200">
+                                    <div class="bg-gray-200 rounded-lg overflow-hidden ">
                                         <img 
                                             src="{{ asset('storage/' . trim($images[0])) }}" 
                                             alt="{{ $activity->activity_name }}" 
@@ -59,7 +59,7 @@
                                     @if(count($images) > 1)
                                         <div class="mt-4 grid grid-cols-3 gap-2">
                                             @foreach(array_slice($images, 1, 3) as $index => $image)
-                                                <div class="cursor-pointer rounded-lg overflow-hidden border-2 border-blue-200" onclick="changeMainImage('{{ asset('storage/' . trim($image)) }}')">
+                                                <div class="cursor-pointer rounded-lg overflow-hidden " onclick="changeMainImage('{{ asset('storage/' . trim($image)) }}')">
                                                     <img 
                                                         src="{{ asset('storage/' . trim($image)) }}" 
                                                         alt="{{ $activity->activity_name }} image {{ $index + 2 }}" 
@@ -77,7 +77,6 @@
                             @endif
                         </div>
 
-
                     </div>
                     <!-- activity Details -->
                         <div class="w-full mt-6">
@@ -92,12 +91,12 @@
                                     <h3 class="text-2xl font-bold">${{ $activity->activity_price }}</h3>
                                     <p class="text-gray-600">per person</p>
                                 </div>
-                                <a href="#" class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black">
-                                Reserve
+                                <a href="{{ route('reservations.show', ['type' => 'activities', 'id' => $activity->activity_id]) }}" 
+                                class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black hover:scale-110 transform transition duration-300">
+                                    Reserve
                                 </a>
                             </div>
                         </div>
-
 
                     <!-- Description -->
                     <div class="mt-8">
@@ -117,9 +116,17 @@
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-xl font-bold">Reviews from other travelers</h3>
                     @auth
-                    <a href="{{ route('reviews.create', ['type' => 'activity', 'id' => $activity->id]) }}">
-                         Write a Review
-                    </a>
+                    @php
+                    $reviewCreateUrl = route('reviews.create', [
+                        'type' => 'activity', 
+                        'id' => $activity->activity_id  // Use the correct primary key for activities
+                    ]);
+                    @endphp
+
+                <a href="{{ $reviewCreateUrl }}"
+                class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black hover:scale-110 transform transition duration-300">
+                    Write a Review
+                </a>
                     @endauth
                 </div>
     

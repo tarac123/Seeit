@@ -47,7 +47,7 @@
                                 @endphp
                                 <div class="relative">
                                     <!-- Main large image -->
-                                    <div class="bg-gray-200 rounded-lg overflow-hidden border-2 border-blue-200">
+                                    <div class="bg-gray-200 rounded-lg overflow-hidden">
                                         <img 
                                             src="{{ asset('storage/' . trim($images[0])) }}" 
                                             alt="{{ $homestay->homestay_name }}" 
@@ -59,7 +59,7 @@
                                     @if(count($images) > 1)
                                         <div class="mt-4 grid grid-cols-3 gap-2">
                                             @foreach(array_slice($images, 1, 3) as $index => $image)
-                                                <div class="cursor-pointer rounded-lg overflow-hidden border-2 border-blue-200" onclick="changeMainImage('{{ asset('storage/' . trim($image)) }}')">
+                                                <div class="cursor-pointer rounded-lg overflow-hidden " onclick="changeMainImage('{{ asset('storage/' . trim($image)) }}')">
                                                     <img 
                                                         src="{{ asset('storage/' . trim($image)) }}" 
                                                         alt="{{ $homestay->homestay_name }} image {{ $index + 2 }}" 
@@ -79,22 +79,24 @@
 
 
                     </div>
-                    <!-- Homestay Details -->
+                    <!-- homestay Details -->
                         <div class="w-full mt-6">
 
                             <div class="pb-4 mb-4">
                                 <p class="text-gray-700 mb-2">{{ $homestay->homestay_desc }}</p>
                             </div>
 
-                            <!-- Pricing and Reservation Section -->
+                            <!-- Price and reservation section -->
                             <div class="bg-gray-100 p-6 flex items-center justify-between border-t-4 border-[#C1FA8F] w-full md:w-1/3">
                                 <div>
                                     <h3 class="text-2xl font-bold">${{ $homestay->homestay_price }}</h3>
-                                    <p class="text-gray-600">per night</p>
+                                    <p class="text-gray-600">per person</p>
                                 </div>
-                                <a href=" ['homestay_id' => $homestay->homestay_id]) }}" class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black">
+                                <a href="{{ route('reservations.show', ['type' => 'homestays', 'id' => $homestay->homestay_id]) }}"
+                                class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black hover:scale-110 transform transition duration-300">
                                     Reserve
                                 </a>
+
                             </div>
                         </div>
 
@@ -103,16 +105,13 @@
                     <div class="mt-8">
                         <h3 class="text-xl font-bold mb-4">About this homestay</h3>
                         <div class="prose max-w-none">
-                            <p class="mb-4">{{ $homestay->homestay_Fulldesc }}</p>
+                            <p class="mb-4">{{ $homestay->homestay_fullDesc }}</p>
                         </div>
                     </div>
 
-                    <!-- Rules -->
+                    <!-- Duration -->
                     <div class="mt-8">
-                        <h3 class="text-xl font-bold mb-4">Homestay Rules</h3>
-                        <div class="prose max-w-none">
-                            <p>{{ $homestay->homestay_rules }}</p>
-                        </div>
+                        <h4 class="text-lg font-semi-bold mb-4">{{ $homestay->homestay_duration }}</h4>
                     </div>
 
             <!-- Reviews -->
@@ -120,9 +119,17 @@
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-xl font-bold">Reviews from other travelers</h3>
                     @auth
-                        <a href="{{ route('reviews.create', ['type' => 'homestay', 'id' => $homestay->id]) }}" class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black">
-                            Write a Review
-                        </a>
+                    @php
+                    $reviewCreateUrl = route('reviews.create', [
+                        'type' => 'homestay', 
+                        'id' => $homestay->homestay_id  
+                    ]);
+                    @endphp
+
+                <a href="{{ $reviewCreateUrl }}"
+                class="bg-[#C1FA8F] hover:bg-[#AFDF84] text-black font-medium py-2 px-6 rounded-full text-sm border-2 border-black hover:scale-110 transform transition duration-300">
+                    Write a Review
+                </a>
                     @endauth
                 </div>
     
@@ -213,12 +220,14 @@
                                                 @auth
                                                     @if(auth()->id() == $review->user_id)
                                                         <div class="mt-2 flex space-x-2">
-                                                            <a href="{{ route('reviews.edit', $review->id) }}" class="text-xs text-blue-600 hover:text-blue-800">Edit</a>
-                                                            <form action="{{ route('reviews.destroy', $review->id) }}" method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="text-xs text-red-600 hover:text-red-800">Delete</button>
-                                                            </form>
+                                                        <form action="{{ route('reviews.destroy', $review->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        
+                                                        <button type="submit" class="bg-red-500 text-white py-2 px-4 rounded-md">
+                                                            Delete Review
+                                                        </button>
+                                                    </form>
                                                         </div>
                                                     @endif
                                                 @endauth
@@ -241,6 +250,8 @@
                         </div>
                     @endif
                     </div>
+
+            
 
                     <!-- Back Button -->
                     <div class="mt-8">

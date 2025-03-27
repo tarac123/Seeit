@@ -15,7 +15,7 @@
         >
         <button 
             type="submit" 
-            class="ml-2 px-3 py-2 bg-black text-white rounded-3xl hover:bg-black hover:text-[#C1FA8F] flex items-center"
+            class="ml-2 px-3 py-2 bg-black text-white rounded-3xl hover:bg-black hover:text-[#C1FA8F] flex items-center hover:scale-110 transform transition duration-300"
         >
             <!-- search svg -->
             <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,256,256" class="mr-2">

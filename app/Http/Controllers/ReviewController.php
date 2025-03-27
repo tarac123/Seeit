@@ -1,105 +1,85 @@
 <?php
+
 namespace App\Http\Controllers;
+use Illuminate\Http\Request;
 use App\Models\Review;
 use App\Models\Homestay;
 use App\Models\Activity;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ReviewController extends Controller
 {
     public function create($type, $id)
     {
-        // Validate type
-        $allowedTypes = ['homestay', 'activity'];
-        if (!in_array($type, $allowedTypes)) {
-            return redirect()->back()->with('error', 'Invalid review type.');
-        }
-    
-        // Dynamically select model
-        $modelClass = $type === 'homestay' ? Homestay::class : Activity::class;
-    
-        try {
-            $model = $modelClass::findOrFail($id);
-    
-            return view('reviews.create', [
-                'type' => $type,
-                'id' => $id,
-                $type => $model
-            ]);
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Resource not found.');
+        if ($type === 'homestay') {
+            $homestay = Homestay::where('homestay_id', $id)->first();
+            
+            return view('reviews.create', compact('type', 'homestay'));
+        } elseif ($type === 'activity') {
+            $activity = Activity::where('activity_id', $id)->first();
+            
+            return view('reviews.create', compact('type', 'activity'));
         }
     }
-
-    public function store(Request $request, $type, $id)
+    public function destroy($review_id)
     {
-        $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|max:500'
-        ]);
-
-        // Dynamically determine the model
-        $modelClass = $type === 'homestay' ? Homestay::class : Activity::class;
-        $model = $modelClass::findOrFail($id);
-
-        // Create the review
-        $review = new Review();
-        $review->rating = $request->rating;
-        $review->comment = $request->comment;
-        $review->user_id = auth()->id();
-        $review->reviewable_type = $modelClass;
-        $review->reviewable_id = $model->id;
-        $review->save();
-
-        // Redirect back to the specific homestay or activity page
-        $redirectRoute = $type === 'homestay' 
-            ? route('homestays.show', $model) 
-            : route('activities.show', $model);
-
-        return redirect($redirectRoute)->with('success', 'Review submitted successfully!');
-    }
-
-    public function edit(Review $review)
-    {
-        // Check if the user is authorized to edit the review
-        if (auth()->user()->id !== $review->user_id && auth()->user()->role !== 'admin') {
-            return redirect()->route('dashboard')->with('error', 'Access denied.');
+        // Find review by id
+        $review = Review::find($review_id);
+    
+        // get reviewable model activity or homestay)
+        $reviewable = $review->reviewable;
+    
+        // If reviewable model is not found error
+        if (!$reviewable) {
+            return redirect()->back()->with('error', 'Related content not found.');
         }
-
-        // Return the edit view with the review
-        return view('reviews.edit', compact('review'));
-    }
-
-    public function update(Request $request, Review $review)
-    {
-        if (auth()->user()->id !== $review->user_id && auth()->user()->role !== 'admin') {
-            return back()->with('error', 'Access denied.');
-        }
-    
-        $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|max:500',
-        ]);
-    
-        $review->update($request->only(['rating', 'comment']));
-    
-        // Determine if the review is for a homestay or activity
-        $redirectRoute = $review->reviewable_type === Homestay::class
-            ? route('homestays.show', $review->reviewable_id)
-            : route('activities.show', $review->reviewable_id);
-    
-        return redirect($redirectRoute)->with('success', 'Review updated successfully.');
-    }
-
-    public function destroy(Review $review)
-    {
-        $redirectRoute = $review->reviewable_type === Homestay::class
-            ? route('homestays.show', $review->reviewable_id)
-            : route('activities.show', $review->reviewable_id);
-    
+        // delete review
         $review->delete();
     
-        return redirect($redirectRoute)->with('success', 'Review deleted successfully!');
+        // Check if reviewable model is activity or homestay and redirect
+        if ($reviewable instanceof Activity) {
+            return redirect()->route('activities.show', ['activity' => $reviewable->activity_id])
+                             ->with('success', 'Review deleted successfully.');
+        } elseif ($reviewable instanceof Homestay) {
+            return redirect()->route('homestays.show', ['homestay' => $reviewable->homestay_id])
+                             ->with('success', 'Review deleted successfully.');
+        }
+    }
+    
+    public function store(Request $request)
+    {
+        $type = $request->input('type');
+        $id = $request->input('id');
+    
+        $validated = $request->validate([
+            'type' => 'required|in:homestay,activity',
+            'id' => 'required|integer',
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'required|string|max:1000',
+        ]);
+    
+        if ($type === 'homestay') {
+            $homestay = Homestay::findOrFail($id);
+            
+            $review = $homestay->reviews()->create([
+                'rating' => $validated['rating'],
+                'comment' => $validated['comment'],
+                'user_id' => auth()->id(),
+            ]);
+    
+            return redirect()->route('homestays.show', $homestay->homestay_id)
+                ->with('success', 'Review submitted successfully');
+        } elseif ($type === 'activity') {
+            $activity = Activity::findOrFail($id);
+            
+            $review = $activity->reviews()->create([
+                'rating' => $validated['rating'],
+                'comment' => $validated['comment'],
+                'user_id' => auth()->id(),
+            ]);
+    
+            return redirect()->route('activities.show', $activity->activity_id)
+                ->with('success', 'Review submitted successfully');
+        }
+    
     }
 }

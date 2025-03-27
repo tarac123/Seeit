@@ -62,30 +62,15 @@ class HomestayController extends Controller
      */
     public function show(Homestay $homestay)
     {
-        try {
-            // Eager load reviews with their associated users
-            $homestay->load(['reviews.user' => function($query) {
-                $query->orderBy('created_at', 'desc');
-            }]);
-
-            // Calculate average rating
-            $averageRating = $homestay->reviews()->avg('rating') ?? 0;
-
-            return view('homestays.show', [
-                'homestay' => $homestay,
-                'averageRating' => round($averageRating, 1)
-            ]);
-        } catch (\Exception $e) {
-            // Log the error
-            \Log::error('Error in homestay show method', [
-                'homestay_id' => $homestay->id,
-                'error' => $e->getMessage()
-            ]);
-
-            // Redirect with error message
-            return redirect()->route('homestays.index')
-                ->with('error', 'Unable to load homestay details.');
-        }
+        $reviewCreateUrl = route('reviews.create', [
+            'type' => 'homestay', 
+            'id' => $homestay->homestay_id
+        ]);
+    
+        return view('homestays.show', [
+            'homestay' => $homestay,
+            'reviewCreateUrl' => $reviewCreateUrl
+        ]);
     }
     
     public function search(Request $request)

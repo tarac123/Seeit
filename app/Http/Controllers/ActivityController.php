@@ -60,32 +60,9 @@ class ActivityController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Activity $activity)
-    {
-        try {
-            // Eager load reviews with their associated users
-            $activity->load(['reviews.user' => function($query) {
-                $query->orderBy('created_at', 'desc');
-            }]);
-
-            // Calculate average rating
-            $averageRating = $activity->reviews()->avg('rating') ?? 0;
-
-            return view('activities.show', [
-                'activity' => $activity,
-                'averageRating' => round($averageRating, 1)
-            ]);
-        } catch (\Exception $e) {
-            // Log the error
-            \Log::error('Error in activity show method', [
-                'activity_id' => $activity->id,
-                'error' => $e->getMessage()
-            ]);
-
-            // Redirect with error message
-            return redirect()->route('activities.index')
-                ->with('error', 'Unable to load activity details.');
-        }
+    public function show($id) {
+        $activity = Activity::findOrFail($id);
+        return view('activities.show', compact('activity'));
     }
     
     public function search(Request $request)

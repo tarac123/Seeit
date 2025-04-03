@@ -1,49 +1,38 @@
-@props(['action', 'method', 'homestay', 'review'])
-
-
-
-<form action="{{$action}}" method="POST" enctype="multipart/form-data">
+<form method="POST" action="{{ $action }}">
     @csrf
-    @if($method === 'PUT' || $method === 'PATCH')
-        @method($method)
+    @method($method)
+
+    @if ($review)
+        <!-- Editing an existing review -->
+        <h3>Edit Review</h3>
+    @else
+        <!-- Creating a new review -->
+        <h3>Write a Review</h3>
     @endif
 
-  
-    <div class="mb-4">
-        <label for="rating" class="block text-sm font-medium text-gray-700">Rating</label>
-        <select 
-            name="rating" 
-            id="rating" 
-            required
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-        >
-            <option value="">Select a Rating</option>
-            <option value="1" {{ old('rating', $review->rating ?? '') == 1 ? 'selected' : '' }}>1 - Poor</option>
-            <option value="2" {{ old('rating', $review->rating ?? '') == 2 ? 'selected' : '' }}>2 - Fair</option>
-            <option value="3" {{ old('rating', $review->rating ?? '') == 3 ? 'selected' : '' }}>3 - Good</option>
-            <option value="4" {{ old('rating', $review->rating ?? '') == 4 ? 'selected' : '' }}>4 - Very Good</option>
-            <option value="5" {{ old('rating', $review->rating ?? '') == 5 ? 'selected' : '' }}>5 - Excellent</option>
-        </select>
-        @error('rating')
-            <p class="text-sm text-red-600">{{ $message }}</p>
-        @enderror
+    @if ($homestay)
+        <input type="hidden" name="type" value="homestay">
+        <input type="hidden" name="id" value="{{ $homestay->id }}">
+    @elseif ($activity)
+        <input type="hidden" name="type" value="activity">
+        <input type="hidden" name="id" value="{{ $activity->id }}">
+    @endif
+
+    <!-- Rating Input -->
+    <div class="form-group">
+        <label for="rating">Rating (1 to 5)</label>
+        <input type="number" name="rating" id="rating" class="form-control"
+            value="{{ old('rating', $review ? $review->rating : '') }}" min="1" max="5" required>
     </div>
-    <div class="mb-4">
-        <label for="comment" class="block text-sm font-medium text-gray-700">Comment</label>
-        <textarea 
-            name="comment" 
-            id="comment" 
-            rows="4"
-            required
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-        >{{ old('comment', $review->comment ?? '') }}</textarea>
-        @error('comment')
-            <p class="text-sm text-red-600">{{ $message }}</p>
-        @enderror
+
+    <!-- Comment Input -->
+    <div class="form-group">
+        <label for="comment">Comment</label>
+        <textarea name="comment" id="comment" class="form-control" rows="4"
+            required>{{ old('comment', $review ? $review->comment : '') }}</textarea>
     </div>
-    <button type="submit">
-    Submit
-    </button>
 
 
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary">{{ $review ? 'Update Review' : 'Submit Review' }}</button>
 </form>

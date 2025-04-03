@@ -28,4 +28,21 @@ class RegistrationTest extends TestCase
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
     }
+
+
+    public static function UserDataProvider(): array
+    {
+        $users = [];
+
+        for ($i = 0; $i <= 1000; $i++) {
+            $users[] = [
+                'Test User' . $i,
+                'test' . $i . '@example.com',
+                'password',
+                $i % 2 === 0 ? '' : ''
+            ];
+        }
+        return $users;
+    }
+
 }

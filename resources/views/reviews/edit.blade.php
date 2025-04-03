@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Write a Review for
-            @if($type == 'homestay')
-                {{ $homestay->homestay_name }}
-            @elseif($type == 'activity')
-                {{ $activity->activity_name }}
+            Edit Your Review
+            @if($review->reviewable_type == 'App\Models\Homestay')
+                for {{ $review->reviewable->homestay_name }}
+            @elseif($review->reviewable_type == 'App\Models\Activity')
+                for {{ $review->reviewable->activity_name }}
             @endif
         </h2>
     </x-slot>
@@ -14,12 +14,9 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <form action="{{ route('reviews.store') }}" method="POST">
+                    <form method="POST" action="{{ route('reviews.update', $review->id) }}">
                         @csrf
-                        <input type="hidden" name="type" value="{{ $type }}">
-                        <input type="hidden" name="id"
-                            value="{{ $type == 'homestay' ? $homestay->homestay_id : $activity->activity_id }}">
-
+                        @method('PUT')
 
                         <!-- Rating -->
                         <div class="mb-6">
@@ -27,7 +24,7 @@
                             <div class="rating flex space-x-1" id="star-container">
                                 @for ($i = 1; $i <= 5; $i++)
                                     <label class="cursor-pointer text-gray-300 star" data-rating="{{ $i }}">
-                                        <input type="radio" name="rating" value="{{ $i }}" class="hidden" {{ old('rating') == $i ? 'checked' : '' }}>
+                                        <input type="radio" name="rating" value="{{ $i }}" class="hidden" {{ old('rating', $review->rating) == $i ? 'checked' : '' }}>
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20"
                                             fill="currentColor">
                                             <path
@@ -38,46 +35,41 @@
                             </div>
                         </div>
 
-
-
-
                         <!-- Comment -->
                         <div class="mb-6">
                             <label for="comment" class="block text-sm font-medium text-gray-700 mb-2">Review</label>
                             <textarea id="comment" name="comment" rows="4"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#C1FA8F] focus:ring-[#C1FA8F]"
-                                placeholder="Share your experience..."></textarea>
+                                placeholder="Share your experience...">{{ old('comment', $review->comment) }}</textarea>
                         </div>
 
                         <!-- Submit Button -->
                         <div class="flex items-center justify-between">
                             <button type="submit"
                                 class="px-2 py-1 bg-[#C1FA8F] text-sm border-2 border-black rounded-full text-gray-800 font-medium hover:bg-[#a1cf7a]">
-                                Submit Review
+                                Update Review
                             </button>
 
-                            @if ($type == 'homestay' && isset($homestay))
-                                <a href="{{ route('homestays.show', ['homestay' => $homestay->homestay_id]) }}"
+                            @if ($review->reviewable_type == 'App\Models\Homestay')
+                                <a href="{{ route('homestays.show', ['homestay' => $review->reviewable->homestay_id]) }}"
                                     class="text-gray-600 hover:text-gray-800">
                                     Cancel
                                 </a>
-                            @elseif ($type == 'activity' && isset($activity))
-                                <a href="{{ route('activities.show', ['activity' => $activity->activity_id]) }}"
+                            @elseif ($review->reviewable_type == 'App\Models\Activity')
+                                <a href="{{ route('activities.show', ['activity' => $review->reviewable->activity_id]) }}"
                                     class="text-gray-600 hover:text-gray-800">
                                     Cancel
                                 </a>
                             @endif
                         </div>
-
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
 </x-app-layout>
 
-<!-- got this script online to help with the star rating feature -->
+<!--rating functionality from create.blade-->
 <script>
     document.querySelector('#star-container').addEventListener('click', function (e) {
         if (e.target.closest('.star')) {

@@ -7,7 +7,8 @@
             // Debug the path
             // dd(asset('storage/' . $firstImage)); // Uncomment to debug
         @endphp
-        <img src="{{ asset('storage/' . $firstImage) }}" alt="{{ $activity->activity_name }}" class="w-full h-48 object-cover">
+        <img src="{{ asset('storage/' . $firstImage) }}" alt="{{ $activity->activity_name }}"
+            class="w-full h-48 object-cover">
     @endif
     <div class="p-4">
         <h3 class="font-bold text-lg mb-2">{{ $activity->activity_name }}</h3>

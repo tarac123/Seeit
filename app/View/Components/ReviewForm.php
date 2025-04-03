@@ -5,6 +5,8 @@ namespace App\View\Components;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use App\Models\Homestay;
+use App\Models\Activity;
 
 class ReviewForm extends Component
 {
@@ -19,12 +21,12 @@ class ReviewForm extends Component
      *
      * @param  string  $action
      * @param  string  $method
-     * @param  \App\Models\Homestay  $homestay
-     * @param  \App\Models\Activity  $activity
+     * @param  \App\Models\Homestay|null  $homestay
+     * @param  \App\Models\Activity|null  $activity
      * @param  \App\Models\Review|null  $review
      * @return void
      */
-    public function __construct($action, $method, $homestay, $review = null)
+    public function __construct($action, $method, $homestay = null, $activity = null, $review = null)
     {
         $this->action = $action;
         $this->method = $method;

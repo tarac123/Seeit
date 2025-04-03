@@ -1,61 +1,49 @@
 <?php
-
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
 use App\Models\Review;
 use App\Models\Homestay;
 use App\Models\Activity;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ReviewController extends Controller
 {
     public function create($type, $id)
     {
-        if ($type === 'homestay') {
-            $homestay = Homestay::where('homestay_id', $id)->first();
-            
-            return view('reviews.create', compact('type', 'homestay'));
-        } elseif ($type === 'activity') {
-            $activity = Activity::where('activity_id', $id)->first();
-            
-            return view('reviews.create', compact('type', 'activity'));
+        // Validate type
+        $allowedTypes = ['homestay', 'activity'];
+        if (!in_array($type, $allowedTypes)) {
+            return redirect()->back()->with('error', 'Invalid review type.');
+        }
+    
+        // Dynamically select model
+        $modelClass = $type === 'homestay' ? Homestay::class : Activity::class;
+    
+        try {
+            $model = $modelClass::findOrFail($id);
+    
+            return view('reviews.create', [
+                'type' => $type,
+                'id' => $id,
+                $type => $model
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Resource not found.');
         }
     }
-    public function destroy($review_id)
-    {
-        // Find review by id
-        $review = Review::find($review_id);
-    
-        // get reviewable model activity or homestay)
-        $reviewable = $review->reviewable;
-    
-        // If reviewable model is not found error
-        if (!$reviewable) {
-            return redirect()->back()->with('error', 'Related content not found.');
-        }
-        // delete review
-        $review->delete();
-    
-        // Check if reviewable model is activity or homestay and redirect
-        if ($reviewable instanceof Activity) {
-            return redirect()->route('activities.show', ['activity' => $reviewable->activity_id])
-                             ->with('success', 'Review deleted successfully.');
-        } elseif ($reviewable instanceof Homestay) {
-            return redirect()->route('homestays.show', ['homestay' => $reviewable->homestay_id])
-                             ->with('success', 'Review deleted successfully.');
-        }
-    }
+
     
     public function store(Request $request)
     {
-        $type = $request->input('type');
-        $id = $request->input('id');
-    
         $validated = $request->validate([
             'type' => 'required|in:homestay,activity',
             'id' => 'required|integer',
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'required|string|max:1000',
         ]);
+    
+        $type = $validated['type'];
+        $id = $validated['id'];
     
         if ($type === 'homestay') {
             $homestay = Homestay::findOrFail($id);
@@ -67,7 +55,7 @@ class ReviewController extends Controller
             ]);
     
             return redirect()->route('homestays.show', $homestay->homestay_id)
-                ->with('success', 'Review submitted successfully');
+                             ->with('success', 'Review submitted successfully');
         } elseif ($type === 'activity') {
             $activity = Activity::findOrFail($id);
             
@@ -78,8 +66,61 @@ class ReviewController extends Controller
             ]);
     
             return redirect()->route('activities.show', $activity->activity_id)
-                ->with('success', 'Review submitted successfully');
+                             ->with('success', 'Review submitted successfully');
         }
+    }
     
+
+
+    public function edit($review_id)
+{
+    // Find the review by its ID
+    $review = Review::findOrFail($review_id);
+
+    // Pass the review to the edit view
+    return view('reviews.edit', compact('review'));
+}
+
+
+public function update(Request $request, $review_id)
+{
+    // Validate the incoming request
+    $validated = $request->validate([
+        'rating' => 'required|integer|min:1|max:5',
+        'comment' => 'required|string|max:1000',
+    ]);
+
+    // Find the review by ID
+    $review = Review::findOrFail($review_id);
+
+    // Update the review fields
+    $review->rating = $validated['rating'];
+    $review->comment = $validated['comment'];
+    $review->save();
+
+    // Get the related "reviewable" model (homestay or activity)
+    $reviewable = $review->reviewable;
+
+    // Check if it's a homestay or activity and redirect accordingly
+    if ($reviewable instanceof Homestay) {
+        return redirect()->route('homestays.show', $reviewable->homestay_id)
+                         ->with('success', 'Review updated successfully');
+    } elseif ($reviewable instanceof Activity) {
+        return redirect()->route('activities.show', $reviewable->activity_id)
+                         ->with('success', 'Review updated successfully');
+    }
+
+}
+
+
+    public function destroy(Review $review)
+    {
+        $redirectRoute = $review->reviewable_type === Homestay::class
+            ? route('homestays.show', $review->reviewable_id)
+            : route('activities.show', $review->reviewable_id);
+    
+        $review->delete();
+    
+        return redirect()->back()->with('success', 'Review deleted successfully');
     }
 }
